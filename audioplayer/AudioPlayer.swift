@@ -39,7 +39,7 @@ class AudioPlayer : NSObject {
   
   var seekToZeroBeforePlay = false
   
-  var restoreAfterScrubbingRate : CGFloat = 1.0
+  let restoreAfterScrubbingRate : CGFloat = 1.0
   
   var timeObserver : AnyObject?
   
@@ -70,6 +70,7 @@ class AudioPlayer : NSObject {
           
             /* IMPORTANT: Must dispatch to main queue in order to operate on the AVPlayer and AVPlayerItem. */
           self.loadAsset(asset, keys: keys)
+          self.setSessionPlayer()
         })
       })
     }
@@ -77,6 +78,13 @@ class AudioPlayer : NSObject {
 
   override init() {
     super.init()
+    
+    self.player = AVPlayer()
+    
+    initScrubberTimer()
+    syncPlayPauseButtons()
+    //syncScrubber()
+  
   }
   
   deinit {
@@ -124,7 +132,7 @@ class AudioPlayer : NSObject {
     }
     
     self.playerItem = AVPlayerItem(asset: asset!)
-    self.playerItem!.addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, context: &AVPlayerStatusObservationContext)
+    self.playerItem!.addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.New, context: &AVPlayerStatusObservationContext)
     
     NSNotificationCenter.defaultCenter().addObserver(self, selector: "playerItemReachedEnd:", name: AVPlayerItemDidPlayToEndTimeNotification, object: self.playerItem)
     
@@ -151,9 +159,8 @@ class AudioPlayer : NSObject {
     
     removePlayerTimerObserver()
     syncScrubber()
-    disableScrubber()
-    disablePlayerButtons()
-
+    self.audioPlayerControls!.enableScrubber(false)
+    self.audioPlayerControls!.enablePlayerButtons(false)
   }
   
   func initScrubberTimer() {
@@ -167,16 +174,19 @@ class AudioPlayer : NSObject {
       let width : CGFloat = CGRectGetWidth(self.audioPlayerControls!.audioSlider.bounds)
       interval = 0.5 * duration / Double(width)
       
+      //CMTimeMakeWithSeconds(<#seconds: Float64#>, <#preferredTimeScale: Int32#>)
       
-      self.timeObserver = self.player!.addPeriodicTimeObserverForInterval(CMTimeMakeWithSeconds(1, 1), queue: dispatch_get_main_queue(), usingBlock: { (CMTime) -> Void in
+      self.timeObserver = self.player!.addPeriodicTimeObserverForInterval(CMTimeMakeWithSeconds(Float64(interval), Int32( NSEC_PER_MSEC)), queue: dispatch_get_main_queue(), usingBlock: { (CMTime) -> Void in
         self.syncScrubber()
       })
+      
     
     }
   }
   
   func syncScrubber() {
     
+    //if self.player!.currentTime() =
     var timeNow = Int(CMTimeGetSeconds(self.player!.currentTime()))
     let playerDurationTime : CMTime = playerItemDuration()
     
@@ -189,7 +199,7 @@ class AudioPlayer : NSObject {
 
     var currentTimeString: NSString = "\(currentMins):\(currentSec)"
     
-  
+    //TODO: set scrubber value
     /*
     
     double duration = CMTimeGetSeconds(playerDuration);
@@ -204,10 +214,46 @@ class AudioPlayer : NSObject {
     
     */
   }
+  func didBeginScrubbing() {
+    self.player!.rate = 0.0
+    removePlayerTimerObserver()
+  }
   
-  func seekToTime(time : CGFloat) {
+  func scrubToValue(scrubberValue : CGFloat) {
+    
+    isSeeking = true
+    var playerDurationTime : CMTime = playerItemDuration()
+    if !playerDurationTime.isValid {return}
+    
+    var duration : Double = CMTimeGetSeconds(playerDurationTime)
+    
+    if duration.isFinite {
+      let width : CGFloat = CGRectGetWidth(self.audioPlayerControls!.audioSlider.bounds)
+      //interval = 0.5 * duration / Double(width)
+      
+      var sliderMaxValue : Double = self.audioPlayerControls!.audioSlider.maximumValue
+      var sliderMinValue : Double = self.audioPlayerControls!.audioSlider.minimumValue
+      
+      var time : Double = duration * (Double(scrubberValue) - sliderMinValue) / (sliderMaxValue - sliderMinValue)
+      
+      self.player!.seekToTime(CMTimeMakeWithSeconds(Float64(time), Int32(NSEC_PER_SEC)), completionHandler: { (finished : Bool) -> Void in
+        dispatch_async(dispatch_get_main_queue(), {
+          self.isSeeking = false
+        })
+      })
+      
+    }
+    
+
+    
     
   }
+  
+  func didEndScrubbing() {
+    
+  }
+  
+
   
   func removePlayerTimerObserver() {
   
@@ -221,13 +267,9 @@ class AudioPlayer : NSObject {
     */
   }
   
-  
-  func enableScrubber() {
+
+  func seekTo() {
     
-  }
-  
-  func disableScrubber() {
-  
   }
   
   func syncPlayPauseButtons() {
@@ -240,20 +282,17 @@ class AudioPlayer : NSObject {
   
   }
   
-  func enablePlayerButtons() {
-    //TODO: uibutton enable disable in controls
-    
-  }
-  
-  func disablePlayerButtons() {
-    //TODO: uibutton enable / disable in controls
-  }
-  
-  
+   
 
   
   func play() {
-    self.player?.play()
+    
+    
+    if seekToZeroBeforePlay {
+      self.player!.seekToTime(kCMTimeZero)
+      seekToZeroBeforePlay = false
+    }
+    self.player!.play()
     
     /*
 
@@ -273,7 +312,7 @@ class AudioPlayer : NSObject {
   }
   
   func pause() {
-    self.player?.pause()
+    self.player!.pause()
     
     //TODO: show playbutton
   }
@@ -303,6 +342,8 @@ class AudioPlayer : NSObject {
       if let e = error {
         println(e.localizedDescription)
       }
+    }else {
+      println("Audio session ready")
     }
   }
 
@@ -338,6 +379,7 @@ class AudioPlayer : NSObject {
             
             disableScrubber()
             disablePlayerButtons()
+            println("Player item status unknown")
 
           case AVPlayerItemStatus.ReadyToPlay:
             
@@ -345,11 +387,15 @@ class AudioPlayer : NSObject {
             
             enableScrubber()
             enablePlayerButtons()
+            println("Player item status ready to play")
+            play()
+            
 
           case AVPlayerItemStatus.Failed:
             let playerItem : AVPlayerItem? = object as? AVPlayerItem
             
               loadingFailed()
+              println("Player item status failed to load")
           }
         }
       }
@@ -369,50 +415,13 @@ class AudioPlayer : NSObject {
         disablePlayerButtons()
         
       }
+    }else {
+      super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+
     }
     
-    super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
   }
-  
-  
-  
-  
-  
-
 }
-
-
-
-
-/*
-extension AVPlayerItem {
-  
-  subscript(key: String) -> NSObject? {
-    get {
-      return self.valueForKeyPath(key) as? NSObject
-    }
-    set(newValue) {
-      self.setValue(newValue, forKeyPath: key)
-    }
-  }
-  func keyPathsForValuesAffectingValueForKey(key: String!) -> NSSet! {
-    return nil
-  }
-  func automaticallyNotifiesObserversForKey(key: String!) -> Bool {
-    return true
-  }
-  
-  func addObserver(observer: NSObject!, forKeyPath keyPath: String!) {
-    self.addObserver(observer, forKeyPath: keyPath, options: nil, context: nil)
-  }
-
-  
-  public override func removeObserver(observer: NSObject, forKeyPath keyPath: String) {
-    self.removeObserver(observer, forKeyPath: keyPath, context: nil)
-  }
-
-}
-*/
 
 extension CMTime {
   var isValid:Bool {

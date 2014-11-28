@@ -17,9 +17,9 @@ class AudioSlider: UIControl {
   
   var scrubberEnabled : Bool = false
   
-  var minimumValue = 0.0
-  var maximumValue = 1.0
-  var sliderValue = 0.0
+  var minimumValue : Double = 0.0
+  var maximumValue : Double = 1.0
+  var sliderValue : Double = 0.0
   
   let trackLayer = CALayer()
   let bufferLayer = CALayer()

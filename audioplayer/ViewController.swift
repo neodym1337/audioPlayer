@@ -29,6 +29,8 @@ class ViewController: UIViewController {
     self.audioPlayerControls!.center = self.view.center
     self.view.addSubview(self.audioPlayerControls!)
     
+    self.audioPlayer!.url = "http://emmf.br.de/apps/brradio/news/latest_news.mp3"
+    
     
   }
 

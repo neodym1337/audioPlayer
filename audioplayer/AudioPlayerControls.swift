@@ -38,7 +38,6 @@ class AudioPlayerControls : UIView {
   }
   
   override init(frame: CGRect) {
-    //
     super.init(frame: frame)
   }
   
@@ -57,6 +56,8 @@ class AudioPlayerControls : UIView {
     
     
     self.audioSlider.addTarget(self, action: "audioSliderValueChanged:", forControlEvents: .ValueChanged)
+    
+    
     
   }
   
@@ -93,6 +94,22 @@ class AudioPlayerControls : UIView {
   func setTimeLeftLabel(timeLeftString : String) {
     
   }
+  
+  func enableScrubber(on : Bool) {
+    self.audioSlider.scrubberEnabled = on
+  }
+
+  
+  func enablePlayerButtons(on : Bool) {
+    //TODO: uibutton enable disable in controls
+    self.playPauseButton.enabled = on
+    
+  }
+  
+  
+
+  
+  
   
   
   
