@@ -9,10 +9,27 @@
 import UIKit
 
 class ViewController: UIViewController {
+  
+  var audioPlayerControls : AudioPlayerControls?
+  
+  var audioPlayer : AudioPlayer?
+  
+  
 
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
+    
+    self.audioPlayer = AudioPlayer()
+    
+    
+    self.audioPlayerControls = AudioPlayerControls.loadFromNibNamed(AudioPlayerControls.nibName(), bundle: nil)
+    self.audioPlayer!.audioPlayerControls = self.audioPlayerControls
+    
+    self.audioPlayerControls!.center = self.view.center
+    self.view.addSubview(self.audioPlayerControls!)
+    
+    
   }
 
   override func didReceiveMemoryWarning() {

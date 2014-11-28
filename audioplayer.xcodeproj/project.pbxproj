@@ -13,8 +13,10 @@
 		13175CF91A24ECC5001D29D2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13175CF81A24ECC5001D29D2 /* Images.xcassets */; };
 		13175CFC1A24ECC5001D29D2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13175CFA1A24ECC5001D29D2 /* LaunchScreen.xib */; };
 		13175D081A24ECC5001D29D2 /* audioplayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13175D071A24ECC5001D29D2 /* audioplayerTests.swift */; };
-		13175D141A24EE96001D29D2 /* AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13175D131A24EE96001D29D2 /* AudioView.swift */; };
 		13175D161A24EECA001D29D2 /* AudioSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13175D151A24EECA001D29D2 /* AudioSlider.swift */; };
+		13175D181A25E078001D29D2 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13175D171A25E078001D29D2 /* AudioPlayer.swift */; };
+		13175D1A1A25E584001D29D2 /* AudioPlayerControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13175D191A25E584001D29D2 /* AudioPlayerControls.swift */; };
+		13175D1C1A25E62B001D29D2 /* AudioPlayerControls.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13175D1B1A25E62B001D29D2 /* AudioPlayerControls.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,8 +40,10 @@
 		13175D011A24ECC5001D29D2 /* audioplayerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = audioplayerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		13175D061A24ECC5001D29D2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		13175D071A24ECC5001D29D2 /* audioplayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = audioplayerTests.swift; sourceTree = "<group>"; };
-		13175D131A24EE96001D29D2 /* AudioView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioView.swift; sourceTree = "<group>"; };
 		13175D151A24EECA001D29D2 /* AudioSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioSlider.swift; sourceTree = "<group>"; };
+		13175D171A25E078001D29D2 /* AudioPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		13175D191A25E584001D29D2 /* AudioPlayerControls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlayerControls.swift; sourceTree = "<group>"; };
+		13175D1B1A25E62B001D29D2 /* AudioPlayerControls.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioPlayerControls.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,8 +87,10 @@
 			children = (
 				13175CF11A24ECC5001D29D2 /* AppDelegate.swift */,
 				13175CF31A24ECC5001D29D2 /* ViewController.swift */,
-				13175D131A24EE96001D29D2 /* AudioView.swift */,
 				13175D151A24EECA001D29D2 /* AudioSlider.swift */,
+				13175D171A25E078001D29D2 /* AudioPlayer.swift */,
+				13175D191A25E584001D29D2 /* AudioPlayerControls.swift */,
+				13175D1B1A25E62B001D29D2 /* AudioPlayerControls.xib */,
 				13175CF51A24ECC5001D29D2 /* Main.storyboard */,
 				13175CF81A24ECC5001D29D2 /* Images.xcassets */,
 				13175CFA1A24ECC5001D29D2 /* LaunchScreen.xib */,
@@ -201,6 +207,7 @@
 				13175CF71A24ECC5001D29D2 /* Main.storyboard in Resources */,
 				13175CFC1A24ECC5001D29D2 /* LaunchScreen.xib in Resources */,
 				13175CF91A24ECC5001D29D2 /* Images.xcassets in Resources */,
+				13175D1C1A25E62B001D29D2 /* AudioPlayerControls.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,9 +225,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13175D1A1A25E584001D29D2 /* AudioPlayerControls.swift in Sources */,
 				13175CF41A24ECC5001D29D2 /* ViewController.swift in Sources */,
 				13175D161A24EECA001D29D2 /* AudioSlider.swift in Sources */,
-				13175D141A24EE96001D29D2 /* AudioView.swift in Sources */,
+				13175D181A25E078001D29D2 /* AudioPlayer.swift in Sources */,
 				13175CF21A24ECC5001D29D2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -413,6 +421,7 @@
 				13175D0D1A24ECC5001D29D2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		13175D0E1A24ECC5001D29D2 /* Build configuration list for PBXNativeTarget "audioplayerTests" */ = {
 			isa = XCConfigurationList;
@@ -421,6 +430,7 @@
 				13175D101A24ECC5001D29D2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
